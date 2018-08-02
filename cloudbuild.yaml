@@ -3,3 +3,14 @@ steps:
   args: ['build']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/petsrego:$SHORT_SHA', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/$PROJECT_ID/petsrego:$SHORT_SHA"]
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
+  - 'image'
+  - 'deployment/petsrego-deployment'
+  - 'petsrego-container=gcr.io/$PROJECT_ID/petsrego:$SHORT_SHA'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=petsrepo-cluster'
