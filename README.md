@@ -1,1 +1,1 @@
-# pet-meetup
+Pets Registration Service
