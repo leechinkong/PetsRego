@@ -9,8 +9,9 @@ steps:
   args:
   - 'set'
   - 'image'
-  - 'deployment/petsrego-deployment'
+  - 'deployment'
+  - 'petsrego'
   - 'petsrego-container=gcr.io/$PROJECT_ID/petsrego:$SHORT_SHA'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=petsrepo-cluster'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=petsrego-cluster'
