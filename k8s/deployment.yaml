@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: petsrego
+  name: petsrego
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: petsrego
+    spec:
+      containers:
+      - name: web
+        image: gcr.io/beaming-surfer-208912/petsrego:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
