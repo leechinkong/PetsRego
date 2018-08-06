@@ -9,10 +9,10 @@ import java.util.*
 data class Pet(
         @JsonIgnore
         @PrimaryKey
-        val id: String = UUID.randomUUID().toString(),
-        val name: String,
-        val type: String = "n/a",
-        val breed: String = "n/a",
-        val picture: String = "n/a",
-        val owner: String) {
+        var id: String = UUID.randomUUID().toString(),
+        var name: String? = null,
+        var type: String = "n/a",
+        var breed: String = "n/a",
+        var picture: String = "n/a",
+        var owner: String? = null) {
 }
