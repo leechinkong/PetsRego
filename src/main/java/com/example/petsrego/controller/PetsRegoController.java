@@ -42,8 +42,7 @@ public class PetsRegoController {
   @GetMapping("/pets")
   public List<Pet> getPets() {
 
-    return Lists.newArrayList(petRepo.findAll()
-    );
+    return Lists.newArrayList(petRepo.findAll());
   }
 
   @GetMapping("/pets/{id}/picture")
