@@ -11,12 +11,23 @@ spec:
       labels:
         app: petsrego
     spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: petsrego-sa-key
       containers:
       - name: web
         image: gcr.io/beaming-surfer-208912/petsrego:latest
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
         livenessProbe:
           httpGet:
             path: /actuator/health
             port: 8081
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/petsrego-sa-key.json
