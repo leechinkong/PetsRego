@@ -39,6 +39,9 @@
 ##### Import service account key to GKE
 <pre>kubectl create secret generic petsrego-sa-key --from-file=petsrego-sa-key.json=petsrego-sa-key.json</pre>
 
+##### Create a cloud storage bucket
+<pre>gsutil mb gs://${PROJECT_ID}</pre>
+
 ## Additional information
 
 ##### Running build manually:
