@@ -19,13 +19,9 @@ import java.util.*
 
 
 @RestController
-class PetsRegoController @Autowired constructor(private val petRepo: PetRepository) {
-
-    @Autowired
-    lateinit var context: ApplicationContext
-
-    @Autowired
-    lateinit var projectIdProvider: GcpProjectIdProvider
+class PetsRegoController @Autowired constructor(private val petRepo: PetRepository,
+                                                private val context: ApplicationContext,
+                                                private val projectIdProvider: GcpProjectIdProvider) {
 
     @GetMapping("/pets")
     fun getPets() = petRepo.findAll()
