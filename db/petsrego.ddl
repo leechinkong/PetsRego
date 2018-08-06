@@ -3,6 +3,6 @@ id      STRING(36)  NOT NULL,
 name    STRING(255) NOT NULL,
 type    STRING(255) NOT NULL,
 breed   STRING(255) NOT NULL,
-picture STRING(255) NOT NULL,
+picture STRING(255),
 owner   STRING(255) NOT NULL
 ) PRIMARY KEY (id);
