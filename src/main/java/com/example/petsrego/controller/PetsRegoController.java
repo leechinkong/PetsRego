@@ -31,24 +31,14 @@ public class PetsRegoController {
 
     List<PetModel> models = new ArrayList<>();
     petRepo.findAll().forEach(pet -> {
-          PetModel model = new PetModel();
-          model.setId(pet.getId());
-          model.setName(pet.getName());
-          model.setType(pet.getType());
-          model.setBreed(pet.getBreed());
-          model.setOwner(pet.getOwner());
-          String singleLinePicture = pet.getPicture();
-          if (!StringUtils.isEmpty(singleLinePicture)) {
-            model.setPicture(Lists.newArrayList(singleLinePicture.split("\n")));
-          }
-          models.add(model);
+          models.add(toPetModel(pet));
         }
     );
     return models;
   }
 
   @PostMapping("/pets")
-  public Pet addPet(@RequestBody PetModel model) {
+  public PetModel addPet(@RequestBody PetModel model) {
 
     Pet pet = new Pet();
     pet.setName(model.getName());
@@ -59,6 +49,20 @@ public class PetsRegoController {
     if (!CollectionUtils.isEmpty(multiLinePicture)) {
       pet.setPicture(multiLinePicture.stream().collect(Collectors.joining("\n")));
     }
-    return petRepo.save(pet);
+    return toPetModel(petRepo.save(pet));
+  }
+
+  private PetModel toPetModel(Pet pet) {
+    PetModel model = new PetModel();
+    model.setId(pet.getId());
+    model.setName(pet.getName());
+    model.setType(pet.getType());
+    model.setBreed(pet.getBreed());
+    model.setOwner(pet.getOwner());
+    String singleLinePicture = pet.getPicture();
+    if (!StringUtils.isEmpty(singleLinePicture)) {
+      model.setPicture(Lists.newArrayList(singleLinePicture.split("\n")));
+    }
+    return model;
   }
 }

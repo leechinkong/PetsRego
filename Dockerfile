@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk8:latest
+FROM gcr.io/google-appengine/openjdk
 RUN mkdir /home/app
 COPY build/libs/petsrego.jar /home/app
 EXPOSE 8080
