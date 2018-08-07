@@ -25,13 +25,11 @@
 ##### Create spanner instance and database
 <pre>gcloud spanner instances create petsworld --config=regional-us-central1 --nodes=1 --description=petsworld</pre>
 <pre>gcloud spanner databases create petsrego --instance=petsworld</pre>
-<pre>gcloud spanner databases ddl update petsrego --instance=petsworld --ddl="$(<db/petsrego.ddl)"</pre>
+<pre>gcloud spanner databases ddl update petsrego --instance=petsworld --ddl="$(&lt;db/petsrego.ddl)"</pre>
 
 ##### Create service account for k8s to use spanner
 <pre>gcloud iam service-accounts create petsrego-sa</pre>
-<pre>gcloud projects add-iam-policy-binding $ \
---member serviceAccount:petsrego-sa@${PROJECT_ID}.iam.gserviceaccount.com \
---role roles/spanner.databaseUser</pre>
+<pre>gcloud projects add-iam-policy-binding $ --member serviceAccount:petsrego-sa@${PROJECT_ID}.iam.gserviceaccount.com --role roles/spanner.databaseUser</pre>
 
 ##### Export service account key
 <pre>gcloud iam service-accounts keys create petsrego-sa-key.json --iam-account petsrego-sa@${PROJECT_ID}.iam.gserviceaccount.com</pre>
