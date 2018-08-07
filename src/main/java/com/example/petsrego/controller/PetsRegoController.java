@@ -1,86 +1,64 @@
 package com.example.petsrego.controller;
 
 import com.example.petsrego.model.Pet;
+import com.example.petsrego.model.PetModel;
 import com.example.petsrego.repository.PetRepository;
 import com.google.common.collect.Lists;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gcp.core.GcpProjectIdProvider;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.WritableResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class PetsRegoController {
 
   private final PetRepository petRepo;
-  private final ApplicationContext context;
-  private final GcpProjectIdProvider projectIdProvider;
 
   @Autowired
-  public PetsRegoController(final PetRepository petRepo,
-      final ApplicationContext context,
-      final GcpProjectIdProvider projectIdProvider) {
+  public PetsRegoController(final PetRepository petRepo) {
 
     this.petRepo = petRepo;
-    this.context = context;
-    this.projectIdProvider = projectIdProvider;
   }
 
   @GetMapping("/pets")
-  public List<Pet> getPets() {
+  public List<PetModel> getPets() {
 
-    return Lists.newArrayList(petRepo.findAll());
-  }
-
-  @GetMapping("/pets/{id}/picture")
-  public ResponseEntity<Resource> getPetPicture(@PathVariable String id) throws Exception {
-
-    Pet pet = petRepo.findById(id).orElseThrow(() -> new Exception("Resource not found."));
-
-    String gsBucket = "gs://" + projectIdProvider.getProjectId();
-    Resource image = context.getResource(gsBucket + "/" + pet.getPicture());
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.IMAGE_JPEG);
-    return new ResponseEntity<>(image, headers, HttpStatus.OK);
+    List<PetModel> models = new ArrayList<>();
+    petRepo.findAll().forEach(pet -> {
+          PetModel model = new PetModel();
+          model.setId(pet.getId());
+          model.setName(pet.getName());
+          model.setType(pet.getType());
+          model.setBreed(pet.getBreed());
+          model.setOwner(pet.getOwner());
+          String singleLinePicture = pet.getPicture();
+          if (!StringUtils.isEmpty(singleLinePicture)) {
+            model.setPicture(Lists.newArrayList(singleLinePicture.split("\n")));
+          }
+          models.add(model);
+        }
+    );
+    return models;
   }
 
   @PostMapping("/pets")
-  public Pet addPet(@RequestBody Pet pet) {
+  public Pet addPet(@RequestBody PetModel model) {
 
-    return petRepo.save(pet);
-  }
-
-  @PostMapping("/pets/{id}/picture")
-  public Pet addPetPicture(@PathVariable String id, @RequestBody MultipartFile picture)
-      throws Exception {
-
-    Pet pet = petRepo.findById(id).orElseThrow(() -> new Exception("Resource not found."));
-    if (picture != null && !picture.isEmpty() && "image/jpeg".equals(picture.getContentType())) {
-      String gsBucket = "gs://" + projectIdProvider.getProjectId();
-      String pictureLink = UUID.randomUUID().toString() + ".jpg";
-      WritableResource resource = (WritableResource) context
-          .getResource(gsBucket + "/" + pictureLink);
-
-      OutputStream outputStream = resource.getOutputStream();
-      outputStream.write(picture.getBytes());
-
-      pet.setPicture(pictureLink);
-      return petRepo.save(pet);
+    Pet pet = new Pet();
+    pet.setName(model.getName());
+    pet.setType(model.getType());
+    pet.setBreed(model.getBreed());
+    pet.setOwner(model.getOwner());
+    List<String> multiLinePicture = model.getPicture();
+    if (!CollectionUtils.isEmpty(multiLinePicture)) {
+      pet.setPicture(multiLinePicture.stream().collect(Collectors.joining("\n")));
     }
-    return null;
+    return petRepo.save(pet);
   }
 }
