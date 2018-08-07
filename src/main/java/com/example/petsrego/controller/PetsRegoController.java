@@ -61,7 +61,10 @@ public class PetsRegoController {
     model.setOwner(pet.getOwner());
     String singleLinePicture = pet.getPicture();
     if (!StringUtils.isEmpty(singleLinePicture)) {
-      model.setPicture(Lists.newArrayList(singleLinePicture.split("\n")));
+      List<String> lines = Lists.newArrayList(singleLinePicture.split("\n"));
+      lines.add(0, "================");
+      lines.add("================");
+      model.setPicture(lines);
     }
     return model;
   }
